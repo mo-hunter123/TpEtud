@@ -41,7 +41,7 @@ Note* InsertionModules(Note *Liste, FILE *nptr){
     char Module[20];
     fscanf(nptr, "%s", Module);
     fscanf(nptr, "%g", &no);
-
+// this a new comment 
     Note *NE = MakeNewNote(no, Module);
     if(!Liste)
         return ((Note*)NE);
