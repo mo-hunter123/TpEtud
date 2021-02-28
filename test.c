@@ -40,7 +40,7 @@ Note* InsertionModules(Note *Liste, FILE *nptr){
     float no; 
     char Module[20];
     fscanf(nptr, "%s", Module);
-    fscanf(nptr, "%g", no);
+    fscanf(nptr, "%g", &no);
 
     Note *NE = MakeNewNote(no, Module);
     if(!Liste)
@@ -112,11 +112,6 @@ int main(int argc, char const *argv[])
     InitEnsemble(Ensemble);
     TelechargerAuTableau(Ensemble, fptr);    
     AffichageTableau(Ensemble);
-
-
-
-
-
 
     fclose(fptr);
     printf("\n");
