@@ -4,6 +4,7 @@
 #include <string.h>
 
 #define MAX_ET 11
+#define MAX_MOD 9
 
 //take words of a text and store them on a data structure 
 typedef struct Cel{
@@ -36,24 +37,24 @@ Note* MakeNewNote(float no, char Module[20]){
     return ((Note*)NE);
 }
 
-Note* InsertionModules(Note *Liste, FILE *nptr){
+Note *AddEnd(Note* Liste, Note *NE){
+    NE->svt = Liste; 
+    return NE;
+}
+
+Note* InsertionModules(Note *Liste, FILE *nptr)
+{
     float no; 
     char Module[20];
-    fscanf(nptr, "%s", Module);
-    fscanf(nptr, "%g", &no);
-// this a new comment 
-    Note *NE = MakeNewNote(no, Module);
-    if(!Liste)
-        return ((Note*)NE);
-    
-    Note *crt = Liste;
-    while (crt->svt)
-        crt = crt->svt;
-    
-    crt->svt = NE;
+    Note *NE = NULL;
+    for(int j = 0; j<MAX_MOD; j++)
+    {
+        fscanf(nptr, "%s", Module);
+        fscanf(nptr, "%g", &no);
+        NE = MakeNewNote(no, Module);
+        Liste = AddEnd(Liste, NE);
+    }
     return Liste;
-    
-    
 }
 
 
@@ -71,10 +72,10 @@ int TelechargerAuTableau(Etudiant *MaTable[MAX_ET], FILE *fptr){
         strncat(Etud, MaTable[i]->CNE, sizeof(MaTable[i]->CNE));
         strncat(Etud, ".txt", 4);
         FILE * nptr = fopen(Etud, "r");
+       
         MaTable[i]->modules = InsertionModules(MaTable[i]->modules, nptr);
-    
+        
     }
-
     return ((int)1);
 }
 
@@ -86,9 +87,9 @@ int AffichageTableau(Etudiant *MaTable[MAX_ET]){
         printf("%s ", MaTable[i]->Prenom);
         printf("%s ", MaTable[i]->Date_naiss);
         Note *crt = MaTable[i]->modules;
-        printf("[");
+        printf("\n[");
         while(crt){
-            printf("%s: %g", MaTable[i]->modules->Module, MaTable[i]->modules->point);
+            printf("%s: %g   ", crt->Module, crt->point);
             crt = crt->svt;
         }
         printf("]");
