@@ -7,23 +7,51 @@
 #define MAX_MOD 9
 
 //take words of a text and store them on a data structure 
+
+//0 => Algo
+//1 => Sdd
+//2 => BD
+//3 => SE
+//4 => Archi
+//5 => Tech
+//6 => Reseaux
+//7 => Web
+//8 => Conce
+//9 => UML
+//10 => Droit
+//11 => Eco
+
+
 typedef struct Cel{
-    char Module[20];
     float point;
+    Etudiant *INfos;
     struct Cel *svt;
 }Note;
 
-typedef struct {
+//Note *notesEt[13];
+
+typedef struct Inf{
     char CNE[11];
-    char Nom[10];
-    char Prenom[10];
     char Date_naiss[12];
-    Note *modules;
+    Note *modules[13];
+    NomEtu *nom;
+    struct Inf *next;
 }Etudiant;
 
+//Etudiant* ets[26][10]
+
+typedef struct NP{
+    char Nom[20];
+    char Prenom[20];
+    Etudiant *infoEtu;
+    struct NP *next;
+}NomEtu;
+
+//NomEtu* nomsets[26]
 
 int InitEnsemble(Etudiant *MaTable[MAX_ET]){
-    for(int i = 0; i < MAX_ET; i++){
+    for(int i = 0; i < MAX_ET; i++)
+    {
         MaTable[i] = NULL;
     }
     return ((int)1);
