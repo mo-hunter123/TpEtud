@@ -37,7 +37,7 @@ int Cle_Etud_cne(char Nom[20])
 }
 
 int Cle_Etud(int *ind1, int *ind2, char CNE[20]){
-    if(sizeof(CNE) != 10){
+    if(strlen(CNE) != 10){
         printf("\nErr avec le CNE\n");
         return ((int)-1);
     }
@@ -47,7 +47,15 @@ int Cle_Etud(int *ind1, int *ind2, char CNE[20]){
     return ((int)1);
 }
 
-
+Note* creerCelNote(){
+    Note* NewNote = (Note*)malloc(sizeof(Note));
+    if(!NewNote){
+        printf("\nErr d'allocation\n");
+        exit(-1);
+    }
+    return NewNote;
+    
+}
 
 
 NomEtu * creerCelNom()
@@ -59,6 +67,7 @@ NomEtu * creerCelNom()
         printf("Pas Assez de memoire");
         exit(-1);
     }
+
     return((NomEtu*)ptr);
 }
 
@@ -249,7 +258,7 @@ void chargementDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10
         for ( indice = 0; indice < 13; indice++)
             notesEt[indice]=insertionNote(notesEt[indice],pEtud->modules[indice]);
         clefNom = Cle_Etud_cne(pNom->Nom);
-        Cle_Etud(&clef1Etud,&clef2Etud);
+        Cle_Etud(&clef1Etud,&clef2Etud, pEtud->CNE);
         nomsets[clefNom]=insertionNom(nomsets[clefNom],pNom);
         ets[clef1Etud][clef2Etud] = insertionInf(ets[clef1Etud][clef2Etud],pEtud);
     }
@@ -264,6 +273,7 @@ int main(int argc, char const *argv[])
         exit(-1);
     }
 
+    // chargementDonnes()
     fclose(fptr);
     printf("\n");
 
