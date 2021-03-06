@@ -11,21 +11,20 @@ char ModulesAnnee[13][8] =  {"Algo", "Sdd", "BD", "SE", "Archi", "TECH", "Reseau
 int InitEnsembles(Etudiant *MaTable[26][10], NomEtu* NomSets[26], Note *NoteEt[MAX_MOD])
 {
     int i, j;
-    //initialisation pour la base des etudiants 
+    //initialisation pour 
+    //la base des etudiants 
     //et base des Noms 
     for(i = 0; i<26; i++)
     {
         NomSets[i] = NULL;
         for(j = 0; j<10; j++)
-        {
             MaTable[i][j] = NULL;
-        }
+        
     }
     //initialisation de base des Notes 
     for(i = 0; i<MAX_MOD; i++)
-    {
         NoteEt[i] = NULL;
-    }
+    
     
     return ((int)1);
 }
@@ -33,22 +32,25 @@ int InitEnsembles(Etudiant *MaTable[26][10], NomEtu* NomSets[26], Note *NoteEt[M
 
 //NomEtu *nomsets[26]
 int Cle_Etud_cne(char Nom[20])
-{
+{   
+    //retourner l'indice de premier caractere 
     return ((int) (Nom[0] - 'A'));
 }
 
-int Cle_Etud(int *ind1, int *ind2, char CNE[11]){
-
-    *ind1 = CNE[0] - 'A';
-    *ind2 = (CNE[9] + 1) - '0';
+int Cle_Etud(int *ind1, int *ind2, char CNE[11])
+{
+    *ind1 = CNE[0] - 'A'; //avoir le premier indice 
+    *ind2 = (CNE[9] + 1) - '0'; //avoir le 2eme indice 
     return ((int)1);
 }
 
 Note * creerCelNote()
 {
+    //creation de la cellule d'une note 
     Note *ptr;
+    //reservation d'espace 
     ptr = (Note*)malloc(sizeof(Note));
-    if(!ptr)
+    if(!ptr) //erreur d'allocation 
     {
         printf("Pas Assez de memoire");
         exit(-1);
@@ -58,9 +60,11 @@ Note * creerCelNote()
 
 NomEtu * creerCelNom()
 {
+    //creation de la cellule d'un nom
     NomEtu *ptr;
+    //reservation d'espace 
     ptr = (NomEtu*)malloc(sizeof(NomEtu));
-    if(!ptr)
+    if(!ptr) //erreur d'allocation 
     {
         printf("Pas Assez de memoire");
         exit(-1);
@@ -71,9 +75,11 @@ NomEtu * creerCelNom()
 
 Etudiant * creerCelEtud()
 {
+    //creation de la cellule d'un nom
     Etudiant *ptr;
+    //reservation d'espace 
     ptr = (Etudiant*)malloc(sizeof(Etudiant));
-    if(!ptr)
+    if(!ptr)//erreur d'allocation
     {
         printf("Pas Assez de memoire");
         exit(-1);
@@ -84,42 +90,59 @@ Etudiant * creerCelEtud()
 
 Note * insertionNote(Note *liste, Note *elem)
 {
-    Note *crt=NULL;
-    if(!liste) return((Note*)elem);
+    //le courant 
+    Note *crt = NULL;
+    //si la liste est vide on retourne l'element a inserer 
+    if(!liste) 
+        return((Note*)elem);
+    
+    //insertion d'element si la valeur 
     if (elem->point > liste->point)
     {
-        elem->svt = liste;
+        elem->svt = liste; //insertion si elem > la tete
         return((Note *)elem); 
     }
+    //on parcours la liste  
     crt = liste;
+    //tant que la liste contient des elements 
     while(crt->svt)
     {
+        //on insere par ordre 
         if(elem->point > crt->svt->point)
         {
             elem->svt = crt->svt;
             crt->svt = elem;
             return((Note*)liste);
         }
+        //on avance le pointeur 
         crt = crt->svt;
     } 
+    //si on atteint la fin 
     crt->svt = elem;
     return((Note*)liste);
 }
 
-// insertion nom 
 NomEtu * insertionNom(NomEtu *liste, NomEtu *elem)
 {
-    NomEtu *crt=NULL;
-    if(!liste) return((NomEtu*)elem);
-    if (strcmp(elem->Nom,liste->Nom) > 0)
+
+    NomEtu *crt = NULL;
+    //si la liste est vide 
+    if(!liste) 
+        return((NomEtu*)elem);
+    
+    //si le nom est < la tete 
+    if (strcmp(elem->Nom,liste->Nom) < 0)
     {
         elem->svt = liste;
         return((NomEtu*)elem); 
     }
+    //on parcours la liste des noms 
     crt = liste;
+    //tant qu'on a des etudiants 
     while(crt->svt)
     {
-        if(strcmp(elem->Nom,liste->Nom) > 0)
+        //on insere si on a la condition 
+        if(strcmp(elem->Nom,crt->svt->Nom) < 0)
         {
             elem->svt = crt->svt;
             crt->svt = elem;
@@ -127,11 +150,12 @@ NomEtu * insertionNom(NomEtu *liste, NomEtu *elem)
         }
         crt = crt->svt;
     } 
+    //insertion a la fin si elle est necessaire 
     crt->svt = elem;
     return((NomEtu*)liste);
 } 
 
-// insertion nom 
+
 Etudiant * insertionInf(Etudiant *liste, Etudiant *elem)
 {
     elem->next = liste;
@@ -141,24 +165,33 @@ Etudiant * insertionInf(Etudiant *liste, Etudiant *elem)
  
 void Affichage_ordre_merite(int codeModule, Note *NoteEt[MAX_MOD])
 {
-    printf("\nCNE\tNOM\tPRENOM\tMODULE\tNOTE\n");
+    // printf("\nCNE\tNOM\tPRENOM\tMODULE\tNOTE\n");
+    printf("+=================+============================+=================+\n");
+    printf("|   CNE           |         Module             |       Note      |\n");
+	printf("+=================+============================+=================+\n");
     
     Note* crt = NoteEt[codeModule];
     while (crt)
     {
-        printf("%s\t%s\t%s\t%s\t%g\n", crt->INfos->CNE, crt->INfos->nom->Nom, crt->INfos->nom->Prenom, ModulesAnnee[codeModule], crt->point);
+        printf("| %11s     | %-25.25s  | %11g     |\n", crt->INfos->CNE, ModulesAnnee[codeModule], crt->point);
         crt = crt->svt;
     }
 }
 
 void Affichage_ordre_alpha(NomEtu *NomSet[26]){
     int i = 0;
-    printf("\nCNE\tNom\tPrenom\t\n");
+    // printf("\nCNE\tNom\tPrenom\t\n");
+
+    printf("+=================+============================+=================+\n");
+    printf("|   CNE           |         Nom                |       Prenom    |\n");
+	printf("+=================+============================+=================+\n");
+
+    NomEtu* crt;
     for(i = 0; i<26; i++){
-        NomEtu* crt = NomSet[i];
+        crt = NomSet[i];
         while (crt)
         {
-            printf("%s\t%s\t%s\n", crt->infoEtu->CNE, crt->Nom, crt->Prenom);
+            printf("| %11s     | %-25.25s  | %11s     |\n", crt->infoEtu->CNE, crt->Nom, crt->Prenom);
             crt = crt->svt;
         }
     }
@@ -211,16 +244,23 @@ void statistique_sur_module(int codeModule, Note *NoteSet[13]){
 //affichages
 
 
-void chargementDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10], FILE *f)
+void chargementDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10])
 {
-    Etudiant *pEtud=NULL;
-    Note *pNote=NULL;
-    NomEtu *pNom=NULL;
-    FILE *fnotes=NULL;
+    FILE *f = fopen("Etudiants/Etudiants.txt", "r");
+    if(!f)
+    {
+        printf("Erreur de chargement du fichier Etudiants.txt");
+        exit(-1);
+    }
+    
+    Etudiant *pEtud = NULL;
+    Note *pNote = NULL;
+    NomEtu *pNom = NULL;
+    FILE *fnotes = NULL;
     char nomFichier[100];
     int stat = 1, indice, clefNom, clef1Etud, clef2Etud;
     int j = 0;
-    for(j = 0; j<MAX_ET; j++)
+    while(!feof(f))
     {
         pEtud = creerCelEtud();
         pNom  = creerCelNom();
@@ -259,6 +299,7 @@ void chargementDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10
         Cle_Etud(&clef1Etud,&clef2Etud,pEtud->CNE);
         nomsets[clefNom]=insertionNom(nomsets[clefNom],pNom);
         ets[clef1Etud][clef2Etud] = insertionInf(ets[clef1Etud][clef2Etud],pEtud);
+        
     }
     fclose(f);
 }
@@ -280,8 +321,7 @@ void dechargementDonnes(NomEtu *nomsets[26])
         pNom = nomsets[indice];
         while(pNom)
         {
-            fprintf(f,"%s\t%s\t%s\t%s\n"
-                    ,pNom->infoEtu->CNE,pNom->Nom,pNom->Prenom,pNom->infoEtu->Date_naiss
+            fprintf(f,"%s\t%s\t%s\t%s\n", pNom->infoEtu->CNE, pNom->Nom,pNom->Prenom,pNom->infoEtu->Date_naiss
                     );
             strcpy(nomFichier,"Note\\");
             strcat(nomFichier,pNom->infoEtu->CNE);
@@ -349,12 +389,7 @@ void saisieDeDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10])
 
 int main(int argc, char const *argv[])
 {
-    FILE *f = fopen("Etudiants/Etudiants.txt", "r");
-    if(!f)
-    {
-        printf("Erreur de chargement du fichier Etudiants.txt");
-        exit(-1);
-    }
+    
     
     Etudiant *MaTable[26][10]; 
     NomEtu* NomSets[26];
@@ -362,11 +397,11 @@ int main(int argc, char const *argv[])
     
     InitEnsembles(MaTable, NomSets, NoteEt);
 
-    chargementDonnes(NomSets, NoteEt, MaTable, f);
-    // Affichage_ordre_alpha(NomSets);
-    // Affichage_ordre_merite(12, NoteEt);
-    statistique_sur_module(8, NoteEt);
-    printf("%d", Valide_un_module(8, NoteEt));
+    chargementDonnes(NomSets, NoteEt, MaTable);
+    Affichage_ordre_alpha(NomSets);
+    Affichage_ordre_merite(0, NoteEt); 
+    // statistique_sur_module(8, NoteEt);
+    // printf("%d", Valide_un_module(8, NoteEt));
     
     printf("\n");
 

@@ -45,6 +45,6 @@ void Affichage_ordre_alpha(NomEtu *NomSet[26]);
 int Non_valide_module(int codeModule, Note *NoteSet[13]);
 int Valide_un_module(int codeModule, Note *NoteSet[13]);
 void statistique_sur_module(int codeModule, Note *NoteSet[13]);
-void chargementDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10], FILE *f);
+void chargementDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10]);
 void dechargementDonnes(NomEtu *nomsets[26]);
 void saisieDeDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10]);
