@@ -219,51 +219,6 @@ void statistique_sur_module(int codeModule, Note *NoteSet[13]){
 //affichages
 
 
-
-
-void chargementDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10])
-{
-    Etudiant *pEtud=NULL;
-    Note *pNote=NULL;
-    NomEtu *pNom=NULL;
-    FILE * f=NULL;
-    int stat = 1,indice,clefNom,clef1Etud,clef2Etud;
-    f = fopen("Etudiants/Etudiants.txt", "r");
-    if(!f)
-    {
-        printf("Erreur de chargement du fichier Etudiants.txt");
-        exit(-1);
-    }
-    while(stat != EOF)
-    {
-        pEtud = creerCelEtud();
-        pNom  = creerCelNom();
-        for ( indice = 0; indice < 13; indice++)
-        {
-            pEtud->modules[indice] = creerCelNote();
-            pEtud->modules[indice]->svt = NULL;
-            pEtud->modules[indice]->INfos = pEtud;
-        }
-        pEtud->nom = pNom;
-        pNom->infoEtu = pEtud;
-        pEtud->next = pNom->svt = NULL;
-        stat = fscanf(f,"%s\t%s\t%s\t%s\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f"
-                ,pEtud->CNE,pNom->Nom,pNom->Prenom,pEtud->Date_naiss,pEtud->modules[0]->point
-                ,pEtud->modules[1]->point
-                ,pEtud->modules[2]->point,pEtud->modules[3]->point,pEtud->modules[4]->point
-                ,pEtud->modules[5]->point,pEtud->modules[6]->point,pEtud->modules[7]->point
-                ,pEtud->modules[8]->point,pEtud->modules[9]->point,pEtud->modules[10]->point
-                ,pEtud->modules[11]->point,pEtud->modules[12]->point
-                );
-        for ( indice = 0; indice < 13; indice++)
-            notesEt[indice]=insertionNote(notesEt[indice],pEtud->modules[indice]);
-        clefNom = Cle_Etud_cne(pNom->Nom);
-        Cle_Etud(&clef1Etud,&clef2Etud, pEtud->CNE);
-        nomsets[clefNom]=insertionNom(nomsets[clefNom],pNom);
-        ets[clef1Etud][clef2Etud] = insertionInf(ets[clef1Etud][clef2Etud],pEtud);
-    }
-}
-
 int main(int argc, char const *argv[])
 {
     FILE* fptr; 
