@@ -24,7 +24,7 @@
 //11 => Eco
 
 
-char ModulesAnnee[12][8] =  { "Algo", "Sdd", "BD", "SE", "Archi", "TECH", "Reseaux", "Web", "Conce", "UML", "Droit", "Eco"};
+char ModulesAnnee[13][8] =  { "Algo", "Sdd", "BD", "SE", "Archi", "TECH", "Reseaux", "Web", "Conce", "UML", "Droit", "Eco", "MoyGen"};
 
 
 int InitEnsembles(Etudiant *MaTable[26][10], NomEtu* NomSets[26], Note *NoteEt[MAX_MOD])
@@ -205,6 +205,7 @@ void chargementDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10
             pEtud->modules[indice] = creerCelNote();
             pEtud->modules[indice]->svt = NULL;
             pEtud->modules[indice]->INfos = pEtud;
+            notesEt[indice] = insertionNote(notesEt[indice],pEtud->modules[indice]);
         }
         pEtud->nom = pNom;
         pNom->infoEtu = pEtud;
