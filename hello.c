@@ -7,7 +7,24 @@
 #define MAX_ET 11
 #define MAX_MOD 13
 
-char ModulesAnnee[13][8] =  {"Algo", "Sdd", "BD", "SE", "Archi", "TECH", "Reseaux", "Web", "Conce", "UML", "Droit", "Eco"};
+//take words of a text and store them on a data structure 
+
+//0 => Algo
+//1 => Sdd
+//2 => BD
+//3 => SE
+//4 => Archi
+//5 => Tech
+//6 => Reseaux
+//7 => Web
+//8 => Conce
+//9 => UML
+//10 => Droit
+//11 => Eco
+
+
+char ModulesAnnee[13][8] =  { "Algo", "Sdd", "BD", "SE", "Archi", "TECH", "Reseaux", "Web", "Conce", "UML", "Droit", "Eco"};
+
 
 int InitEnsembles(Etudiant *MaTable[26][10], NomEtu* NomSets[26], Note *NoteEt[MAX_MOD])
 {
@@ -27,6 +44,7 @@ int InitEnsembles(Etudiant *MaTable[26][10], NomEtu* NomSets[26], Note *NoteEt[M
     {
         NoteEt[i] = NULL;
     }
+
     return ((int)1);
 }
 
@@ -110,47 +128,113 @@ NomEtu * insertionNom(NomEtu *liste, NomEtu *elem)
 Etudiant * insertionInf(Etudiant *liste, Etudiant *elem)
 {
     elem->next = liste;
-    return((Etudiant*)elem); 
+    return((NomEtu*)elem); 
 } 
- 
-void Affichage_ordre_merite(int codeModule, Note *NoteEt[MAX_MOD])
+
+Note * creerCelNote()
+{
+    Note *ptr;
+    ptr = (Note*)malloc(sizeof(Note));
+    if(!ptr)
+    {
+        printf("Pas Assez de memoire");
+        exit(-1);
+    }
+    return((Note*)ptr);
+}
+
+NomEtu * creerCelNom()
+{
+    NomEtu *ptr;
+    ptr = (NomEtu*)malloc(sizeof(NomEtu));
+    if(!ptr)
+    {
+        printf("Pas Assez de memoire");
+        exit(-1);
+    }
+    return((NomEtu*)ptr);
+}
+
+
+Etudiant * creerCelEtud()
+{
+    Etudiant *ptr;
+    ptr = (Etudiant*)malloc(sizeof(Etudiant));
+    if(!ptr)
+    {
+        printf("Pas Assez de memoire");
+        exit(-1);
+    }
+    return((Etudiant*)ptr);
+}
+
+
+
+void Affichage_ordre_merite(Note *NoteEt[MAX_MOD])
 {
     printf("\nCNE\tNOM\tPRENOM\tMODULE\tNOTE\n");
     
-    Note* crt = NoteEt[codeModule];
-    while (crt)
+    int i= 0;
+    for(i = 0; i<12; i++)
     {
-        printf("%s\t%s\t%s\t%s\t%g", crt->INfos->CNE, crt->INfos->nom->Nom, crt->INfos->nom->Prenom, ModulesAnnee[codeModule], crt->point);
-        crt = crt->svt;
+        printf("%c\t%c\t%c\t%c\t%c\n");
     }
 }
 
-void Affichage_ordre_alpha(NomEtu *NomSet[26]){
-    int i = 0;
-    printf("\nCNE\tNom\tPrenom\t\n");
-    for(i = 0; i<26; i++){
-        NomEtu* crt = NomSet[i];
-        while (crt)
+void chargementDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10])
+{
+    Etudiant *pEtud=NULL;
+    Note *pNote=NULL;
+    NomEtu *pNom=NULL;
+    FILE * f=NULL;
+    int stat = 1,indice,clefNom,clef1Etud,clef2Etud;
+    f = fopen("Etudiants/Etudiants.txt", "r");
+    if(!f)
+    {
+        printf("Erreur de chargement du fichier Etudiants.txt");
+        exit(-1);
+    }
+    while(stat != EOF)
+    {
+        pEtud = creerCelEtud();
+        pNom  = creerCelNom();
+        for ( indice = 0; i < 13; indice++)
         {
-            printf("%s\t%s\t%s\n", crt->infoEtu->CNE, crt->Nom, crt->Prenom);
-            crt = crt->svt;
+            pEtud->modules[indice] = creerCelNote();
+            pEtud->modules[indice]->svt = NULL;
+            pEtud->modules[indice]->INfos = pEtud;
         }
+        pEtud->nom = pNom;
+        pNom->infoEtu = pEtud;
+        pEtud->next = pNom->svt = NULL;
+        stat = fscanf(f,"%s\t%s\t%s\t%s\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f"
+                ,pEtud->CNE,pNom->Nom,pNom->Prenom,pEtud->Date_naiss,pEtud->modules[0]->point
+                ,pEtud->modules[1]->point
+                ,pEtud->modules[2]->point,pEtud->modules[3]->point,pEtud->modules[4]->point
+                ,pEtud->modules[5]->point,pEtud->modules[6]->point,pEtud->modules[7]->point
+                ,pEtud->modules[8]->point,pEtud->modules[9]->point,pEtud->modules[10]->point
+                ,pEtud->modules[11]->point,pEtud->modules[12]->point
+                );
+        for ( indice = 0; indice < 13; indice++)
+            notesEt[indice]=insertionNote(notesEt[indice],pEtud->modules[indice]);
+        clefNom = Cle_Etud_cne(pNom->Nom);
+        Cle_Etud(&clef1Etud,&clef2Etud);
+        nomsets[clefNom]=insertionNom(nomsets[clefNom],pNom);
+        ets[clef1Etud][clef2Etud] = insertionInf(ets[clef1Etud][clef2Etud],pEtud);
     }
 }
-
-//affichages
 
 int main(int argc, char const *argv[])
 {
-    FILE* fptr; 
-    fptr = fopen("Etudiants/Etudiants.txt", "r");
-    if(!fptr){
-        printf("ERR");
-        exit(-1);
-    }
+    // FILE* fptr; 
+    // fptr = fopen("Etudiants/Etudiants.txt", "r");
+    // if(!fptr){
+    //     printf("ERR");
+    //     exit(-1);
+    // }
 
-    fclose(fptr);
-    printf("\n");
+    // fclose(fptr);
+    // printf("\n");
 
     return 0;
 }
