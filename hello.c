@@ -3,8 +3,8 @@
 #include <string.h>
 #include "hello.h"
 
-// #define MAX_ET 11
-// #define MAX_MOD 13
+#define MAX_ET 11
+#define MAX_MOD 13
 
 char ModulesAnnee[13][8] =  {"Algo", "Sdd", "BD", "SE", "Archi", "TECH", "Reseaux", "Web", "Conce", "UML", "Droit", "Eco", "MoyGen"};
 
@@ -47,16 +47,17 @@ int Cle_Etud(int *ind1, int *ind2, char CNE[20]){
     return ((int)1);
 }
 
-Note* creerCelNote(){
-    Note* NewNote = (Note*)malloc(sizeof(Note));
-    if(!NewNote){
-        printf("\nErr d'allocation\n");
+Note * creerCelNote()
+{
+    Note *ptr;
+    ptr = (Note*)malloc(sizeof(Note));
+    if(!ptr)
+    {
+        printf("Pas Assez de memoire");
         exit(-1);
     }
-    return NewNote;
-    
+    return((Note*)ptr);
 }
-
 
 NomEtu * creerCelNom()
 {
@@ -67,7 +68,6 @@ NomEtu * creerCelNom()
         printf("Pas Assez de memoire");
         exit(-1);
     }
-
     return((NomEtu*)ptr);
 }
 
@@ -85,13 +85,6 @@ Etudiant * creerCelEtud()
 }
 
 
-Note *AddEnd(Note* Liste, Note *NE){
-    NE->svt = Liste; 
-    return NE;
-}
-
-// int InsertionPoint()
-// insertion note 
 Note * insertionNote(Note *liste, Note *elem)
 {
     Note *crt=NULL;
@@ -217,6 +210,148 @@ void statistique_sur_module(int codeModule, Note *NoteSet[13]){
 }
 
 //affichages
+
+
+void chargementDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10])
+{
+    Etudiant *pEtud=NULL;
+    Note *pNote=NULL;
+    NomEtu *pNom=NULL;
+    FILE *f=NULL, *fnotes=NULL;
+    char nomFichier[100];
+    int stat = 1,indice,clefNom,clef1Etud,clef2Etud;
+    f = fopen("Etudiants/Etudiants.txt", "r");
+    if(!f)
+    {
+        printf("Erreur de chargement du fichier Etudiants.txt");
+        exit(-1);
+    }
+    while(stat != EOF)
+    {
+        pEtud = creerCelEtud();
+        pNom  = creerCelNom();
+        for ( indice = 0; indice < 13; indice++)
+        {
+            pEtud->modules[indice] = creerCelNote();
+            pEtud->modules[indice]->svt = NULL;
+            pEtud->modules[indice]->INfos = pEtud;
+            notesEt[indice] = insertionNote(notesEt[indice],pEtud->modules[indice]);
+        }
+        pEtud->nom = pNom;
+        pNom->infoEtu = pEtud;
+        pEtud->next = pNom->svt = NULL;
+        stat = fscanf(f,"%s\t%s\t%s\t%s"
+                    ,pEtud->CNE,pNom->Nom,pNom->Prenom,pEtud->Date_naiss
+                    );
+        strcpy(nomFichier,"Note\\");
+        strcat(nomFichier,pEtud->CNE);
+        strcat(nomFichier,".txt");
+        fnotes = fopen(nomFichier,"r");
+        if(!fnotes)
+        {
+            printf("Erreur de chargement du fichier %s.txt",pEtud->CNE,);
+            exit(-1);
+        }
+        for (indice = 0; indice < 13; indice++)
+        {
+           fscanf(fnotes,"%f",pEtud->modules[indice]->point);
+            notesEt[indice]=insertionNote(notesEt[indice],pEtud->modules[indice]); 
+        }
+            
+        fclose(fnotes);
+
+        clefNom = Cle_Etud_cne(pNom->Nom);
+        Cle_Etud(&clef1Etud,&clef2Etud,pEtud->CNE);
+        nomsets[clefNom]=insertionNom(nomsets[clefNom],pNom);
+        ets[clef1Etud][clef2Etud] = insertionInf(ets[clef1Etud][clef2Etud],pEtud);
+    }
+    fclose(f);
+}
+
+void dechargementDonnes(NomEtu *nomsets[26])
+{
+    NomEtu *pNom=NULL;
+    int indice;
+    FILE *f=NULL, *fnotes=NULL;
+    char nomFichier[100];
+    f = fopen("Etudiants/Etudiants.txt", "w");
+    if(!f)
+    {
+        printf("Erreur de chargement du fichier Etudiants.txt");
+        exit(-1);
+    }
+    for(indice=0 ; indice < 26 ; indice++)
+    {
+        pNom = nomsets[indice];
+        while(pNom)
+        {
+            fprintf(f,"%s\t%s\t%s\t%s\n"
+                    ,pNom->infoEtu->CNE,pNom->Nom,pNom->Prenom,pNom->infoEtu->Date_naiss
+                    );
+            strcpy(nomFichier,"Note\\");
+            strcat(nomFichier,pNom->infoEtu->CNE);
+            strcat(nomFichier,".txt");
+            fnotes = fopen(nomFichier,"w");
+            if(!fnotes)
+            {
+                printf("Erreur de chargement du fichier %s.txt",pNom->infoEtu->CNE);
+                exit(-1);
+            }
+            for (indice = 0; indice < 13; indice++)
+                fscanf(fnotes,"%f\n",pNom->infoEtu->modules[indice]->point);
+            fclose(fnotes);
+            pNom = pNom->svt; 
+        }
+    }
+    fclose(f);
+}
+
+void saisieDeDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10])
+{
+    Etudiant *pEtud=NULL;
+    Note *pNote=NULL;
+    NomEtu *pNom=NULL;
+    char nomFichier[100];
+    int indice,clefNom,clef1Etud,clef2Etud,nbEtud;
+    printf("Combien d'etudiants vous voulez ajouter : ");
+    scanf("%d",&nbEtud);
+    for( indice = 0; indice < nbEtud; indice++)
+    {
+        pEtud = creerCelEtud();
+        pNom  = creerCelNom();
+        for ( indice = 0; indice < 13; indice++)
+        {
+            pEtud->modules[indice] = creerCelNote();
+            pEtud->modules[indice]->svt = NULL;
+            pEtud->modules[indice]->INfos = pEtud;
+        }
+        pEtud->nom = pNom;
+        pNom->infoEtu = pEtud;
+        pEtud->next = pNom->svt = NULL;
+
+        printf("Entrer le CNE : ");
+        scanf("%s",pEtud->CNE);
+        printf("Entrer le Nom : ");
+        scanf("%s",pNom->Nom);
+        printf("Entrer le Prenom : ");
+        scanf("%s",pNom->Prenom);
+        printf("Entrer la date de naissance (DD-MM-YYYY) : ");
+        scanf("%s",pEtud->Date_naiss);
+        for (indice = 0; indice < 12; indice++)
+        {
+            printf("Entrer la note du module %s : ",ModulesAnnee[indice]);
+            scanf("%f",pEtud->modules[indice]->point);
+            notesEt[indice]=insertionNote(notesEt[indice],pEtud->modules[indice]);
+        }
+        clefNom = Cle_Etud_cne(pNom->Nom);
+        Cle_Etud(&clef1Etud,&clef2Etud,pEtud->CNE);
+        nomsets[clefNom]=insertionNom(nomsets[clefNom],pNom);
+        ets[clef1Etud][clef2Etud] = insertionInf(ets[clef1Etud][clef2Etud],pEtud);
+    }
+    
+  
+
+}
 
 
 int main(int argc, char const *argv[])
