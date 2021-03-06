@@ -7,24 +7,7 @@
 #define MAX_ET 11
 #define MAX_MOD 13
 
-//take words of a text and store them on a data structure 
-
-//0 => Algo
-//1 => Sdd
-//2 => BD
-//3 => SE
-//4 => Archi
-//5 => Tech
-//6 => Reseaux
-//7 => Web
-//8 => Conce
-//9 => UML
-//10 => Droit
-//11 => Eco
-
-
-char ModulesAnnee[13][8] =  { "Algo", "Sdd", "BD", "SE", "Archi", "TECH", "Reseaux", "Web", "Conce", "UML", "Droit", "Eco"};
-
+char ModulesAnnee[13][8] =  {"Algo", "Sdd", "BD", "SE", "Archi", "TECH", "Reseaux", "Web", "Conce", "UML", "Droit", "Eco"};
 
 int InitEnsembles(Etudiant *MaTable[26][10], NomEtu* NomSets[26], Note *NoteEt[MAX_MOD])
 {
@@ -44,7 +27,6 @@ int InitEnsembles(Etudiant *MaTable[26][10], NomEtu* NomSets[26], Note *NoteEt[M
     {
         NoteEt[i] = NULL;
     }
-
     return ((int)1);
 }
 
@@ -128,21 +110,35 @@ NomEtu * insertionNom(NomEtu *liste, NomEtu *elem)
 Etudiant * insertionInf(Etudiant *liste, Etudiant *elem)
 {
     elem->next = liste;
-    return((NomEtu*)elem); 
+    return((Etudiant*)elem); 
 } 
  
-
-void Affichage_ordre_merite(Note *NoteEt[MAX_MOD])
+void Affichage_ordre_merite(int codeModule, Note *NoteEt[MAX_MOD])
 {
     printf("\nCNE\tNOM\tPRENOM\tMODULE\tNOTE\n");
     
-    int i= 0;
-    for(i = 0; i<12; i++)
+    Note* crt = NoteEt[codeModule];
+    while (crt)
     {
-        printf("%c\t%c\t%c\t%c\t%c\n");
+        printf("%s\t%s\t%s\t%s\t%g", crt->INfos->CNE, crt->INfos->nom->Nom, crt->INfos->nom->Prenom, ModulesAnnee[codeModule], crt->point);
+        crt = crt->svt;
     }
 }
 
+void Affichage_ordre_alpha(NomEtu *NomSet[26]){
+    int i = 0;
+    printf("\nCNE\tNom\tPrenom\t\n");
+    for(i = 0; i<26; i++){
+        NomEtu* crt = NomSet[i];
+        while (crt)
+        {
+            printf("%s\t%s\t%s\n", crt->infoEtu->CNE, crt->Nom, crt->Prenom);
+            crt = crt->svt;
+        }
+    }
+}
+
+//affichages
 
 int main(int argc, char const *argv[])
 {

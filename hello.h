@@ -1,4 +1,3 @@
-
 typedef struct Cel{
     float point;
     struct Inf *INfos;
