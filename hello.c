@@ -34,13 +34,13 @@ int InitEnsembles(Etudiant *MaTable[26][10], NomEtu* NomSets[26], Note *NoteEt[M
 //NomEtu *nomsets[26]
 int Cle_Etud_cne(char Nom[20])
 {
-    return ((int) 'z'-Nom[0]);
+    return ((int) (Nom[0] - 'A'));
 }
 
 int Cle_Etud(int *ind1, int *ind2, char CNE[11]){
 
-    *ind1 = 'Z' - CNE[0];
-    *ind2 = '9' - CNE[9] + 1;
+    *ind1 = CNE[0] - 'A';
+    *ind2 = (CNE[9] + 1) - '0';
     return ((int)1);
 }
 
@@ -146,7 +146,7 @@ void Affichage_ordre_merite(int codeModule, Note *NoteEt[MAX_MOD])
     Note* crt = NoteEt[codeModule];
     while (crt)
     {
-        printf("%s\t%s\t%s\t%s\t%g", crt->INfos->CNE, crt->INfos->nom->Nom, crt->INfos->nom->Prenom, ModulesAnnee[codeModule], crt->point);
+        printf("%s\t%s\t%s\t%s\t%g\n", crt->INfos->CNE, crt->INfos->nom->Nom, crt->INfos->nom->Prenom, ModulesAnnee[codeModule], crt->point);
         crt = crt->svt;
     }
 }
@@ -164,7 +164,8 @@ void Affichage_ordre_alpha(NomEtu *NomSet[26]){
     }
 }
 
-int Non_valide_module(int codeModule, Note *NoteSet[13]){
+int Non_valide_module(int codeModule, Note *NoteSet[13])
+{
     Note *crt = NoteSet[codeModule];
     int Nombre = 0; 
     while (crt)
@@ -176,7 +177,8 @@ int Non_valide_module(int codeModule, Note *NoteSet[13]){
     return ((int)Nombre);
 }
 
-int Valide_un_module(int codeModule, Note *NoteSet[13]){
+int Valide_un_module(int codeModule, Note *NoteSet[13])
+{
     //13 si vous voulez la note generale 
     Note *crt = NoteSet[codeModule];
     int Nombre = 0;
@@ -216,9 +218,9 @@ void chargementDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10
     NomEtu *pNom=NULL;
     FILE *fnotes=NULL;
     char nomFichier[100];
-    int stat = 1,indice,clefNom,clef1Etud,clef2Etud;
-    
-    while(stat != EOF)
+    int stat = 1, indice, clefNom, clef1Etud, clef2Etud;
+    int j = 0;
+    for(j = 0; j<MAX_ET; j++)
     {
         pEtud = creerCelEtud();
         pNom  = creerCelNom();
@@ -230,16 +232,13 @@ void chargementDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10
         }
         pEtud->nom = pNom;
         pNom->infoEtu = pEtud;
-        pEtud->next = pNom->svt = NULL;
+        pEtud->next = NULL;
+        pNom->svt = NULL;
         stat = fscanf(f,"%s\t%s\t%s\t%s", pEtud->CNE, pNom->Nom, pNom->Prenom, pEtud->Date_naiss);
         //bien realisee 
         strcpy(nomFichier,"Note/");
-        strncat(nomFichier,pEtud->CNE, 10);
-        strncat(nomFichier,".txt", 4);
-        printf("%s", nomFichier);
-        // printf("\n\n%s, %s, %s, %s\n\n", pEtud->CNE, pNom->Nom, pNom->Prenom, pEtud->Date_naiss);
-
-        
+        strcat(nomFichier ,pEtud->CNE);
+        strcat(nomFichier,".txt");
         
         fnotes = fopen(nomFichier,"r");
         if(!fnotes)
@@ -249,13 +248,13 @@ void chargementDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10
         }
         for (indice = 0; indice < MAX_MOD; indice++)
         {
-            fscanf(fnotes,"%f",pEtud->modules[indice]->point);
-            printf("%f", pEtud->modules[indice]->point);
-            notesEt[indice]=insertionNote(notesEt[indice],pEtud->modules[indice]); 
+            fscanf(fnotes,"%g", &pEtud->modules[indice]->point);
+            notesEt[indice] = insertionNote(notesEt[indice],pEtud->modules[indice]); 
         }
             
         fclose(fnotes);
 
+        
         clefNom = Cle_Etud_cne(pNom->Nom);
         Cle_Etud(&clef1Etud,&clef2Etud,pEtud->CNE);
         nomsets[clefNom]=insertionNom(nomsets[clefNom],pNom);
@@ -323,7 +322,8 @@ void saisieDeDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10])
         }
         pEtud->nom = pNom;
         pNom->infoEtu = pEtud;
-        pEtud->next = pNom->svt = NULL;
+        pEtud->next = NULL;
+        pNom->svt = NULL;
 
         printf("Entrer le CNE : ");
         scanf("%s",pEtud->CNE);
@@ -344,9 +344,6 @@ void saisieDeDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10])
         nomsets[clefNom]=insertionNom(nomsets[clefNom],pNom);
         ets[clef1Etud][clef2Etud] = insertionInf(ets[clef1Etud][clef2Etud],pEtud);
     }
-    
-  
-
 }
 
 
@@ -366,6 +363,11 @@ int main(int argc, char const *argv[])
     InitEnsembles(MaTable, NomSets, NoteEt);
 
     chargementDonnes(NomSets, NoteEt, MaTable, f);
+    // Affichage_ordre_alpha(NomSets);
+    // Affichage_ordre_merite(12, NoteEt);
+    statistique_sur_module(8, NoteEt);
+    printf("%d", Valide_un_module(8, NoteEt));
+    
     printf("\n");
 
     return 0;
