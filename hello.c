@@ -1,13 +1,12 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "hello.h"
 
-#define MAX_ET 11
-#define MAX_MOD 13
+// #define MAX_ET 11
+// #define MAX_MOD 13
 
-char ModulesAnnee[13][8] =  {"Algo", "Sdd", "BD", "SE", "Archi", "TECH", "Reseaux", "Web", "Conce", "UML", "Droit", "Eco"};
+char ModulesAnnee[13][8] =  {"Algo", "Sdd", "BD", "SE", "Archi", "TECH", "Reseaux", "Web", "Conce", "UML", "Droit", "Eco", "MoyGen"};
 
 int InitEnsembles(Etudiant *MaTable[26][10], NomEtu* NomSets[26], Note *NoteEt[MAX_MOD])
 {
@@ -48,12 +47,10 @@ int Cle_Etud(int *ind1, int *ind2, char CNE[20]){
     return ((int)1);
 }
 
-
 Note *AddEnd(Note* Liste, Note *NE){
     NE->svt = Liste; 
     return NE;
 }
-
 
 // int InsertionPoint()
 // insertion note 
@@ -136,6 +133,48 @@ void Affichage_ordre_alpha(NomEtu *NomSet[26]){
             crt = crt->svt;
         }
     }
+}
+
+int Non_valide_module(int codeModule, Note *NoteSet[13]){
+    Note *crt = NoteSet[codeModule];
+    int Nombre = 0; 
+    while (crt)
+    {
+        if(crt->point < 12)
+            Nombre++;
+        crt = crt->svt;
+    }
+    return ((int)Nombre);
+}
+
+int Valide_un_module(int codeModule, Note *NoteSet[13]){
+    //13 si vous voulez la note generale 
+    Note *crt = NoteSet[codeModule];
+    int Nombre = 0;
+    while (crt)
+    {   
+        //si la note est sup a 12 on incremente
+        //le nombre des etudiants 
+        if(crt->point >= 12)
+            Nombre ++;
+        crt = crt->svt;
+    }
+    return ((int)Nombre);
+}
+
+
+
+void statistique_sur_module(int codeModule, Note *NoteSet[13]){
+    int Valide = Valide_un_module(codeModule, NoteSet);
+    int NValide = Non_valide_module(codeModule, NoteSet);
+    if(codeModule != 12){
+        printf("\nModule de %s: valide= %d non valide= %d f \n", ModulesAnnee[codeModule], Valide, NValide);
+        return;
+    }
+    printf("\nStatistique sur la moyenne generale\n==> %d valide, et %d Non valide leur annee\n", Valide, NValide);
+
+    return;
+    
 }
 
 //affichages
