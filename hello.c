@@ -166,14 +166,14 @@ Etudiant * insertionInf(Etudiant *liste, Etudiant *elem)
 void Affichage_ordre_merite(int codeModule, Note *NoteEt[MAX_MOD])
 {
     // printf("\nCNE\tNOM\tPRENOM\tMODULE\tNOTE\n");
-    printf("+=================+============================+=================+\n");
-    printf("|   CNE           |         Module             |       Note      |\n");
-	printf("+=================+============================+=================+\n");
+    printf("+================+==============+=============+==================+==================+\n");
+    printf("|      CNE       |     Nom      |   Prenom    |      Module      |       Note       |\n");
+	printf("+================+==============+=============+==================+==================+\n");
     
     Note* crt = NoteEt[codeModule];
     while (crt)
     {
-        printf("| %11s     | %-25.25s  | %11g     |\n", crt->INfos->CNE, ModulesAnnee[codeModule], crt->point);
+        printf("| %1s     | %-11.25s  | %-11.25s |   %11s    |     %10g   |\n", crt->INfos->CNE, crt->INfos->nom->Nom, crt->INfos->nom->Prenom, ModulesAnnee[codeModule], crt->point);
         crt = crt->svt;
     }
 }
@@ -182,16 +182,16 @@ void Affichage_ordre_alpha(NomEtu *NomSet[26]){
     int i = 0;
     // printf("\nCNE\tNom\tPrenom\t\n");
 
-    printf("+=================+============================+=================+\n");
-    printf("|   CNE           |         Nom                |       Prenom    |\n");
-	printf("+=================+============================+=================+\n");
+    printf("+=================+==============+=================+\n");
+    printf("|      CNE        |     Nom      |      Prenom     |\n");
+	printf("+=================+==============+=================+\n");
 
     NomEtu* crt;
     for(i = 0; i<26; i++){
         crt = NomSet[i];
         while (crt)
         {
-            printf("| %11s     | %-25.25s  | %11s     |\n", crt->infoEtu->CNE, crt->Nom, crt->Prenom);
+            printf("| %11s     | %-11.25s  | %11s     |\n", crt->infoEtu->CNE, crt->Nom, crt->Prenom);
             crt = crt->svt;
         }
     }
