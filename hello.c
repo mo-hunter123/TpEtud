@@ -229,7 +229,7 @@ void chargementDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10
     {
         pEtud = creerCelEtud();
         pNom  = creerCelNom();
-        for ( indice = 0; i < 13; indice++)
+        for ( indice = 0; indice < 13; indice++)
         {
             pEtud->modules[indice] = creerCelNote();
             pEtud->modules[indice]->svt = NULL;
