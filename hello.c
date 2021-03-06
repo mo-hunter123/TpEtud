@@ -26,6 +26,7 @@ int InitEnsembles(Etudiant *MaTable[26][10], NomEtu* NomSets[26], Note *NoteEt[M
     {
         NoteEt[i] = NULL;
     }
+    
     return ((int)1);
 }
 
@@ -36,11 +37,7 @@ int Cle_Etud_cne(char Nom[20])
     return ((int) 'z'-Nom[0]);
 }
 
-int Cle_Etud(int *ind1, int *ind2, char CNE[20]){
-    if(strlen(CNE) != 10){
-        printf("\nErr avec le CNE\n");
-        return ((int)-1);
-    }
+int Cle_Etud(int *ind1, int *ind2, char CNE[11]){
 
     *ind1 = 'Z' - CNE[0];
     *ind2 = '9' - CNE[9] + 1;
@@ -212,49 +209,48 @@ void statistique_sur_module(int codeModule, Note *NoteSet[13]){
 //affichages
 
 
-void chargementDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10])
+void chargementDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10], FILE *f)
 {
     Etudiant *pEtud=NULL;
     Note *pNote=NULL;
     NomEtu *pNom=NULL;
-    FILE *f=NULL, *fnotes=NULL;
+    FILE *fnotes=NULL;
     char nomFichier[100];
     int stat = 1,indice,clefNom,clef1Etud,clef2Etud;
-    f = fopen("Etudiants/Etudiants.txt", "r");
-    if(!f)
-    {
-        printf("Erreur de chargement du fichier Etudiants.txt");
-        exit(-1);
-    }
+    
     while(stat != EOF)
     {
         pEtud = creerCelEtud();
         pNom  = creerCelNom();
-        for ( indice = 0; indice < 13; indice++)
+        for (indice = 0; indice < MAX_MOD; indice++)
         {
             pEtud->modules[indice] = creerCelNote();
             pEtud->modules[indice]->svt = NULL;
             pEtud->modules[indice]->INfos = pEtud;
-            notesEt[indice] = insertionNote(notesEt[indice],pEtud->modules[indice]);
         }
         pEtud->nom = pNom;
         pNom->infoEtu = pEtud;
         pEtud->next = pNom->svt = NULL;
-        stat = fscanf(f,"%s\t%s\t%s\t%s"
-                    ,pEtud->CNE,pNom->Nom,pNom->Prenom,pEtud->Date_naiss
-                    );
-        strcpy(nomFichier,"Note\\");
-        strcat(nomFichier,pEtud->CNE);
-        strcat(nomFichier,".txt");
+        stat = fscanf(f,"%s\t%s\t%s\t%s", pEtud->CNE, pNom->Nom, pNom->Prenom, pEtud->Date_naiss);
+        //bien realisee 
+        strcpy(nomFichier,"Note/");
+        strncat(nomFichier,pEtud->CNE, 10);
+        strncat(nomFichier,".txt", 4);
+        printf("%s", nomFichier);
+        // printf("\n\n%s, %s, %s, %s\n\n", pEtud->CNE, pNom->Nom, pNom->Prenom, pEtud->Date_naiss);
+
+        
+        
         fnotes = fopen(nomFichier,"r");
         if(!fnotes)
         {
-            printf("Erreur de chargement du fichier %s.txt",pEtud->CNE,);
+            printf("Erreur de chargement du fichier %s.txt",nomFichier);
             exit(-1);
         }
-        for (indice = 0; indice < 13; indice++)
+        for (indice = 0; indice < MAX_MOD; indice++)
         {
-           fscanf(fnotes,"%f",pEtud->modules[indice]->point);
+            fscanf(fnotes,"%f",pEtud->modules[indice]->point);
+            printf("%f", pEtud->modules[indice]->point);
             notesEt[indice]=insertionNote(notesEt[indice],pEtud->modules[indice]); 
         }
             
@@ -356,15 +352,20 @@ void saisieDeDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10])
 
 int main(int argc, char const *argv[])
 {
-    FILE* fptr; 
-    fptr = fopen("Etudiants/Etudiants.txt", "r");
-    if(!fptr){
-        printf("ERR");
+    FILE *f = fopen("Etudiants/Etudiants.txt", "r");
+    if(!f)
+    {
+        printf("Erreur de chargement du fichier Etudiants.txt");
         exit(-1);
     }
+    
+    Etudiant *MaTable[26][10]; 
+    NomEtu* NomSets[26];
+    Note *NoteEt[MAX_MOD];
+    
+    InitEnsembles(MaTable, NomSets, NoteEt);
 
-    // chargementDonnes()
-    fclose(fptr);
+    chargementDonnes(NomSets, NoteEt, MaTable, f);
     printf("\n");
 
     return 0;

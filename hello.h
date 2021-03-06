@@ -34,7 +34,9 @@ typedef struct NP{
 int InitEnsembles(Etudiant *MaTable[26][10], NomEtu* NomSets[26], Note *NoteEt[MAX_MOD]);
 int Cle_Etud_cne(char Nom[20]);
 int Cle_Etud(int *ind1, int *ind2, char CNE[20]);
-Note *AddEnd(Note* Liste, Note *NE);
+Note * creerCelNote();
+NomEtu * creerCelNom();
+Etudiant * creerCelEtud();
 Note * insertionNote(Note *liste, Note *elem);
 NomEtu * insertionNom(NomEtu *liste, NomEtu *elem);
 Etudiant * insertionInf(Etudiant *liste, Etudiant *elem);
@@ -43,3 +45,6 @@ void Affichage_ordre_alpha(NomEtu *NomSet[26]);
 int Non_valide_module(int codeModule, Note *NoteSet[13]);
 int Valide_un_module(int codeModule, Note *NoteSet[13]);
 void statistique_sur_module(int codeModule, Note *NoteSet[13]);
+void chargementDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10], FILE *f);
+void dechargementDonnes(NomEtu *nomsets[26]);
+void saisieDeDonnes(NomEtu *nomsets[26],Note *notesEt[13],Etudiant* ets[26][10]);
